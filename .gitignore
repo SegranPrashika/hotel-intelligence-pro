@@ -1,0 +1,7 @@
+﻿node_modules/
+dist/
+public/Hotel_Reviews.csv
+public/hotel_bookings.csv
+__pycache__/
+*.pyc
+.env
