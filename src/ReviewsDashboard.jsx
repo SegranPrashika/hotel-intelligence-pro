@@ -107,8 +107,8 @@ export default function ReviewsDashboard() {
       <section className="card note-card warn">
         <h3>Read this before trusting the sentiment numbers</h3>
         <p>
-          All {int(meta.textsScored)} review texts were scored with wink-nlp using the guide's exact call,
-          then checked against each reviewer's own 0-10 score.
+          All {int(meta.textsScored)} review texts were scored with wink-nlp and compared with each
+          reviewer's own 0-10 score.
         </p>
         <div className="verdict-grid">
           <div className="verdict">

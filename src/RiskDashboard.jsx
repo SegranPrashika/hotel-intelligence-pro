@@ -46,16 +46,16 @@ export default function RiskDashboard({ bookings }) {
         <div>
           <h1>Cancellation Risk Engine</h1>
           <p className="muted">
-            Transparent, explainable risk scoring across {int(total)} bookings. Every score is computed from the 6 strongest predictors - no black box.
+            Transparent, rule-based scores across {int(total)} bookings. Scores summarize six booking-time signals; they are separate from the trained ML model.
           </p>
         </div>
       </header>
 
-      <section className="kpi-grid">
+      <section className="kpi-grid kpi-grid-four">
         <Kpi label="High risk" value={int(high)} sub={pct(high / total)} tone="neg" />
         <Kpi label="Medium risk" value={int(medium)} sub={pct(medium / total)} />
         <Kpi label="Low risk" value={int(low)} sub={pct(low / total)} tone="pos" />
-        <Kpi label="Revenue at risk" value={money(revenueAtRisk)} sub="if flagged active bookings cancel" tone="neg" />
+        <Kpi label="Historical revenue exposure" value={money(revenueAtRisk)} sub="high-risk, non-canceled records" tone="neg" />
       </section>
 
       <section className="card">

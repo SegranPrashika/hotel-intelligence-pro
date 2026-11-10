@@ -10,28 +10,40 @@ ChartJS.register(
 );
 
 export const PALETTE = {
-  positive: '#10b981', negative: '#f43f5e', neutral: '#94a3b8',
-  accent: '#38bdf8', accent2: '#818cf8', warm: '#f59e0b', blue: '#3b82f6',
+  positive: '#42c89a', negative: '#f0788a', neutral: '#9aa9bd',
+  accent: '#55c6d6', accent2: '#a78bfa', warm: '#eab86c', blue: '#70a5f5',
 };
 
-const GRID = 'rgba(255, 255, 255, 0.05)';
-const TICK = '#94a3b8';
-const baseTooltip = { 
-  backgroundColor: '#0b1120', padding: 12, titleFont: { size: 13, weight: 'bold' }, 
-  bodyFont: { size: 13 }, cornerRadius: 8, displayColors: true, borderColor: '#1e293b', borderWidth: 1
+const GRID = 'rgba(151, 172, 199, 0.13)';
+const TICK = '#a1afc2';
+const baseTooltip = {
+  backgroundColor: '#111a29',
+  padding: 12,
+  titleFont: { size: 12, weight: 'bold' },
+  bodyFont: { size: 12 },
+  cornerRadius: 8,
+  displayColors: true,
+  borderColor: '#34445b',
+  borderWidth: 1,
 };
 
-ChartJS.defaults.font.family = "'Inter', sans-serif";
+ChartJS.defaults.color = TICK;
+ChartJS.defaults.font.family = 'Inter, "Segoe UI", sans-serif';
+ChartJS.defaults.font.size = 11;
+ChartJS.defaults.borderColor = GRID;
 
 export function DoughnutChart({ labels, values, colors, centerLabel, centerValue, height = 260 }) {
   return (
     <div className="chart-box" style={{ height }}>
       <Doughnut
-        data={{ labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0, hoverOffset: 4 }] }}
+        data={{ labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0, hoverOffset: 6, spacing: 2, borderRadius: 3 }] }}
         options={{
-          responsive: true, maintainAspectRatio: false, cutout: '75%',
+          responsive: true, maintainAspectRatio: false, cutout: '73%',
           plugins: {
-            legend: { position: 'bottom', labels: { color: TICK, padding: 20, font: { size: 12 } } },
+            legend: {
+              position: 'bottom',
+              labels: { color: TICK, padding: 18, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 11 } },
+            },
             tooltip: { ...baseTooltip, callbacks: { label: (ctx) => {
               const total = ctx.dataset.data.reduce((a, b) => a + b, 0) || 1;
               return ` ${ctx.label}: ${ctx.parsed.toLocaleString()} (${((ctx.parsed / total) * 100).toFixed(1)}%)`;
@@ -58,9 +70,10 @@ export function BarChart({ labels, values, colors, horizontal = true, format, he
           responsive: true, maintainAspectRatio: false,
           indexAxis: horizontal ? 'y' : 'x',
           scales: {
-            x: { grid: { display: !horizontal, color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 11 }, callback: (v) => (format ? format(v) : v) }, beginAtZero: true },
-            y: { grid: { display: horizontal, color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 11 }, autoSkip: false }, beginAtZero: !horizontal },
+            x: { grid: { display: !horizontal, color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 10 }, callback: (v) => (format ? format(v) : v), maxRotation: 0 }, beginAtZero: true },
+            y: { grid: { display: horizontal, color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 10 }, autoSkip: horizontal ? false : true, maxRotation: 0 }, beginAtZero: !horizontal },
           },
+          layout: { padding: { top: 4, right: 8, bottom: 0, left: 4 } },
           plugins: { legend: { display: false }, tooltip: { ...baseTooltip } },
         }}
       />
@@ -77,8 +90,8 @@ export function LineChart({ labels, series, height = 280, formatLeft, formatRigh
           datasets: series.map((s) => ({
             label: s.label, data: s.values,
             borderColor: s.color,
-            backgroundColor: s.fill ? s.color + '11' : s.color,
-            fill: Boolean(s.fill), tension: 0.4, borderWidth: 2, pointRadius: 0, pointHoverRadius: 6,
+            backgroundColor: s.fill ? s.color + '18' : s.color,
+            fill: Boolean(s.fill), tension: 0.32, borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5,
             yAxisID: s.axis || 'y',
           })),
         }}
@@ -86,14 +99,14 @@ export function LineChart({ labels, series, height = 280, formatLeft, formatRigh
           responsive: true, maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
           scales: {
-            x: { grid: { display: false }, ticks: { color: TICK, font: { size: 11 }, maxTicksLimit: 12 } },
+            x: { grid: { display: false }, ticks: { color: TICK, font: { size: 10 }, maxTicksLimit: 10, maxRotation: 0 } },
             y: { position: 'left', beginAtZero: true, max: yMaxLeft, grid: { color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 11 }, callback: (v) => (formatLeft ? formatLeft(v) : v) } },
             ...(series.some((s) => s.axis === 'y1') ? {
               y1: { position: 'right', beginAtZero: true, max: yMaxRight, grid: { display: false }, ticks: { color: PALETTE.accent2, font: { size: 11 }, callback: (v) => (formatRight ? formatRight(v) : v) } },
             } : {}),
           },
           plugins: {
-            legend: { position: 'top', align: 'end', labels: { color: TICK, usePointStyle: true, boxWidth: 8, font: { size: 12 } } },
+            legend: { position: 'top', align: 'end', labels: { color: TICK, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 14, font: { size: 11 } } },
             tooltip: { ...baseTooltip },
           },
         }}
@@ -102,7 +115,12 @@ export function LineChart({ labels, series, height = 280, formatLeft, formatRigh
   );
 }
 
-export function RocChart({ data, height = 300 }) {
+export function RocChart({
+  data,
+  height = 300,
+  xTitle = 'False Positive Rate',
+  yTitle = 'True Positive Rate',
+}) {
   return (
     <div className="chart-box" style={{ height }}>
       <Scatter
@@ -110,10 +128,11 @@ export function RocChart({ data, height = 300 }) {
         options={{
           responsive: true, maintainAspectRatio: false,
           scales: {
-            x: { min: 0, max: 1, grid: { color: GRID, drawBorder: false }, ticks: { color: TICK }, title: { display: true, text: 'False Positive Rate', color: TICK } },
-            y: { min: 0, max: 1, grid: { color: GRID, drawBorder: false }, ticks: { color: TICK }, title: { display: true, text: 'True Positive Rate', color: TICK } },
+            x: { min: 0, max: 1, grid: { color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 10 } }, title: { display: true, text: xTitle, color: TICK, font: { size: 11, weight: '600' } } },
+            y: { min: 0, max: 1, grid: { color: GRID, drawBorder: false }, ticks: { color: TICK, font: { size: 10 } }, title: { display: true, text: yTitle, color: TICK, font: { size: 11, weight: '600' } } },
           },
-          plugins: { legend: { position: 'bottom', labels: { color: TICK, usePointStyle: true } }, tooltip: { ...baseTooltip } },
+          layout: { padding: { top: 4, right: 8, bottom: 0, left: 4 } },
+          plugins: { legend: { position: 'bottom', labels: { color: TICK, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, padding: 14, font: { size: 10 } } }, tooltip: { ...baseTooltip } },
         }}
       />
     </div>
